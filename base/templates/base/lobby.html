@@ -1,0 +1,149 @@
+{% extends 'base/main.html' %}
+{% load static %}
+{% block content %}
+
+<main class="main-container">
+
+    <section class="form-container">
+        <img class="logo" src="{% static 'images/chat-icon.png' %}" alt="MyChat Logo"/>
+
+        <div class="welcome-message">
+            <h1>Welcome to MyChat</h1>
+            <p>Your personalized group video calling platform!</p>
+        </div>
+
+        <form id="form" class="join-form">
+            <div class="field-wrapper">
+
+                <div class="form-field">
+                    <label for="room">Room:</label>
+                    <input id="room" name="room" placeholder="Enter a room name..." style="text-transform:uppercase"/>
+                </div>
+
+                <div class="form-field">
+                    <label for="name">Name:</label>
+                    <input id="name" name="name" placeholder="Enter your name..." style="text-transform:uppercase"/>
+                </div>
+
+                <div class="form-field">
+                    <button type="submit" class="join-button">Join Stream</button>
+                </div>
+            </div>
+        </form>
+    </section>
+</main>
+
+<script>
+    let form = document.getElementById('form');
+
+    let handleSubmit = async (e) => {
+        e.preventDefault();
+        let room = e.target.room.value.toUpperCase();
+        let name = e.target.name.value;
+
+        let response = await fetch(`/get_token/?channel=${room}`);
+        let data = await response.json();
+
+        let UID = data.uid;
+        let token = data.token;
+
+        sessionStorage.setItem('UID', UID);
+        sessionStorage.setItem('token', token);
+        sessionStorage.setItem('room', room);
+        sessionStorage.setItem('name', name);
+
+        window.open('/room/', '_self');
+    };
+
+    form.addEventListener('submit', handleSubmit);
+</script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: 'Courier New', Courier, monospace;
+        background-color: #000;
+        color: #00ff00;
+    }
+
+    .main-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: #000 url('https://source.unsplash.com/random/1600x900') no-repeat center center;
+        background-size: cover;
+    }
+
+    .form-container {
+        background: rgba(0, 0, 0, 0.8);
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        max-width: 400px;
+        width: 100%;
+    }
+
+    .logo {
+        width: 100px;
+        margin-bottom: 1rem;
+    }
+
+    .welcome-message h1 {
+        margin-bottom: 0.5rem;
+        color: #00ff00;
+        font-size: 1.8rem;
+    }
+
+    .welcome-message p {
+        margin-bottom: 2rem;
+        color: #55ff55;
+    }
+
+    .join-form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-field {
+        margin-bottom: 1.5rem;
+        width: 100%;
+    }
+
+    .form-field label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #00ff00;
+        font-weight: bold;
+    }
+
+    .form-field input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #00ff00;
+        border-radius: 8px;
+        background: #000;
+        color: #00ff00;
+        font-size: 1rem;
+    }
+
+    .join-button {
+        width: 100%;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 8px;
+        background: #00ff00;
+        color: #000;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .join-button:hover {
+        background: #55ff55;
+    }
+</style>
+
+{% endblock content %}
